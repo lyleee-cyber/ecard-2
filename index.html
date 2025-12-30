@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>下雪翻頁卡片</title>
+  <title>故事電子卡</title>
   <style>
     body {
       margin: 0;
@@ -20,57 +20,32 @@
       position: fixed;
       top: -10px;
       color: white;
-      font-size: 1em;
       user-select: none;
-      animation-name: fall;
-      animation-timing-function: linear;
+      animation: fall linear;
     }
 
     @keyframes fall {
-      to {
-        transform: translateY(110vh);
-      }
+      to { transform: translateY(110vh); }
     }
 
+    /* 卡片外框 */
     .card {
       width: 320px;
       height: 420px;
-      perspective: 1000px;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transition: transform 1s;
-      transform-style: preserve-3d;
-    }
-
-    .card.flipped .inner {
-      transform: rotateY(180deg);
-    }
-
-    .page {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
       background: white;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,.15);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       padding: 30px;
       box-sizing: border-box;
       text-align: center;
+      cursor: pointer;
+      z-index: 10;
+      animation: fadeIn 1s ease;
     }
 
-    .back {
-      transform: rotateY(180deg);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; }
     }
 
     h1 {
@@ -91,36 +66,46 @@
 </head>
 <body>
 
-  <!-- 卡片 -->
-  <div class="card" onclick="flipCard()">
-    <div class="inner">
-      <!-- 正面 -->
-      <div class="page front">
-        <h1>🎄 點我一下</h1>
-        <p>有一張冬日卡片</p>
-        <div class="hint">（點擊翻頁）</div>
-      </div>
-
-      <!-- 背面 -->
-      <div class="page back">
-        <h1>❄️ 給你</h1>
-        <p>
-          願這個冬天，<br>
-          有溫暖的事、<br>
-          溫柔的人陪著你 🤍
-        </p>
-        <div class="hint">（再點一次）</div>
-      </div>
-    </div>
+  <!-- 卡片內容 -->
+  <div class="card" onclick="nextPage()">
+    <h1 id="title">🎄 一個小故事</h1>
+    <p id="content">
+      點我一下<br>
+      開始這張卡片
+    </p>
+    <div class="hint" id="hint">（點擊繼續）</div>
   </div>
 
   <script>
-    /* 翻頁 */
-    function flipCard() {
-      document.querySelector(".card").classList.toggle("flipped");
+    /* 📖 故事內容（你主要改這裡） */
+    const pages = [
+      {
+        title: "🎄 一個小故事",
+        content: "點我一下<br>開始這張卡片",
+        hint: "（點擊繼續）"
+      },
+      {
+        title: "❄️ 第一頁",
+        content: "在忙碌的日子裡，<br>你一定很努力了。",
+        hint: "（點擊下一頁）"
+      },
+      {
+        title: "💌 第二頁",
+        content: "希望這張卡片，<br>能替你留住一點溫柔。",
+        hint: "（點擊回到開頭）"
+      }
+    ];
+
+    let pageIndex = 0;
+
+    function nextPage() {
+      pageIndex = (pageIndex + 1) % pages.length;
+      document.getElementById("title").innerHTML = pages[pageIndex].title;
+      document.getElementById("content").innerHTML = pages[pageIndex].content;
+      document.getElementById("hint").innerHTML = pages[pageIndex].hint;
     }
 
-    /* ❄️ 產生雪花 */
+    /* ❄️ 雪花 */
     function createSnow() {
       const snow = document.createElement("div");
       snow.className = "snow";
@@ -130,12 +115,10 @@
       snow.style.animationDuration = Math.random() * 3 + 5 + "s";
       document.body.appendChild(snow);
 
-      setTimeout(() => {
-        snow.remove();
-      }, 8000);
+      setTimeout(() => snow.remove(), 8000);
     }
 
-    setInterval(createSnow, 200);
+    setInterval(createSnow, 300);
   </script>
 
 </body>
